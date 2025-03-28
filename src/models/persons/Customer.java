@@ -1,4 +1,4 @@
-package model;
+package models.persons;
 
 public class Customer {
 }
