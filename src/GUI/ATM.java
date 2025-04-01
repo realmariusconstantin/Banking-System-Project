@@ -4,7 +4,7 @@ import javax.swing.*;
 
 public class ATM {
     private JPanel rootPanel;
-    private JTabbedPane tabbedPane1;
+    private JTabbedPane ATMTabbedPane;
     private JTextField accountIDTextField;
     private JRadioButton depositAccountRadioButton;
     private JRadioButton currentAccountRadioButton;
@@ -14,4 +14,7 @@ public class ATM {
     private JButton logoutButton;
     private JPanel buttonPanel;
     private JPanel accountPanel;
+    private JButton createNewAccountButton;
+    private JButton changeAIRButton;
+    private JButton changeOverdraftLimitButton;
 }
