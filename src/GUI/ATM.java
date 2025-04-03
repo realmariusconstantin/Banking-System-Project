@@ -24,6 +24,8 @@ public class ATM {
     private JButton changeOverdraftLimitButton;
 
     public static void main(String[] args) {
+        new ThomondBankData();
+
         JFrame frame = new JFrame("ATM");
         frame.setContentPane(new ATM().rootPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -39,20 +41,42 @@ public class ATM {
     }
 
     public ATM() {
-        depositButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        depositButton.addActionListener(e -> {
+            try {
                 int id = Integer.parseInt(accountIDTextField.getText());
                 Account acc = findAccountById(id);
                 if (acc != null) {
                     String input = JOptionPane.showInputDialog("Enter amount to deposit:");
                     double amount = Double.parseDouble(input);
                     acc.deposit(amount);
-                    JOptionPane.showMessageDialog(null, "Deposited €" + amount);
+                    JOptionPane.showMessageDialog(null, "Deposited €" + amount + ". New Balance: €" + acc.getBalance());
                 } else {
                     JOptionPane.showMessageDialog(null, "Account not found.");
                 }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "Invalid input.");
+            }
+        });
+
+        withdrawButton.addActionListener(e -> {
+            try {
+                int id = Integer.parseInt(accountIDTextField.getText());
+                Account acc = findAccountById(id);
+                if (acc != null) {
+                    String input = JOptionPane.showInputDialog("Enter amount to withdraw:");
+                    double amount = Double.parseDouble(input);
+                    acc.withdraw(amount);
+                    JOptionPane.showMessageDialog(null, "Withdrew €" + amount + ". New Balance: €" + acc.getBalance());
+                } else {
+                    JOptionPane.showMessageDialog(null, "Account not found.");
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "Invalid input.");
             }
         });
     }
+
+
+
+
 }
