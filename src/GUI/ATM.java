@@ -37,6 +37,7 @@ public class ATM {
         frame.setVisible(true);
     }
 
+    // Method to find an account by ID
     private Account findAccountById(int id) {
         for (Account acc : ThomondBankData.thomondAccounts) {
             if (acc.getId() == id) return acc;
@@ -62,6 +63,7 @@ public class ATM {
             }
         });
 
+        //withdraw button
         withdrawButton.addActionListener(e -> {
             try {
                 int accountId = Integer.parseInt(accountIDTextField.getText().trim());
@@ -89,7 +91,7 @@ public class ATM {
             }
         });
 
-
+        //balance button
         balanceButton.addActionListener(e -> {
             try {
                 int id = Integer.parseInt(accountIDTextField.getText());
@@ -104,13 +106,13 @@ public class ATM {
             }
         });
 
+        //logout button
         logoutButton.addActionListener(e -> {
             int response = JOptionPane.showConfirmDialog(null, "Are you sure you want to log out?", "Logout", JOptionPane.YES_NO_OPTION);
             if (response == JOptionPane.YES_OPTION) {
                 System.exit(0);
             }
         });
-
 
         //Group up the buttons
         ButtonGroup accountTypeGroup = new ButtonGroup();
@@ -125,6 +127,32 @@ public class ATM {
         //when current account is selected, enable the overdraft limit button
         currentAccountRadioButton.addActionListener(e -> {
             changeOverdraftLimitButton.setEnabled(true);
+        });
+
+        // Create New Account button
+        createNewAccountButton.addActionListener(e -> {
+          String[] options = {"Customer", "Bank Staff"};
+          int Choice = JOptionPane.showOptionDialog(null, "Select Account Type", "Account Type",
+                  JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+
+          if(Choice == 0){
+              JOptionPane.showMessageDialog(null, "Customer account created.");
+
+          } else if(Choice == 1){
+              String[] staffOptions = {"Bank Manager", "Bank Staff"};
+                int staffChoice = JOptionPane.showOptionDialog(null, "Select Staff Type", "Staff Type",
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, staffOptions, staffOptions[0]);
+                if(staffChoice == 0){
+                    JOptionPane.showMessageDialog(null, "Bank Manager account created.");
+                } else if(staffChoice == 1){
+                    JOptionPane.showMessageDialog(null, "Bank Staff account created.");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Invalid choice.");
+                }
+
+
+          }
+
         });
 
 
