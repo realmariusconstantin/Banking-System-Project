@@ -8,12 +8,15 @@ public class DepositAccount extends Account {
     }
 
     @Override
-    public void withdraw(double amount) {
+    public boolean withdraw(double amount) {
         if (amount > 0 && amount <= balance) {
             balance -= amount;
+            return true;
         } else {
             System.out.println("Insufficient funds. Withdrawal denied.");
+
         }
+        return false;
     }
 
     public static void setAIR(double newAIR) {

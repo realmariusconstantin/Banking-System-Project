@@ -15,7 +15,7 @@ public abstract class Account {
         this.dateCreated = LocalDate.now();
     }
 
-    public abstract void withdraw(double amount);
+    public abstract boolean withdraw(double amount);
 
     public void deposit(double amount) {
         if (amount > 0) {

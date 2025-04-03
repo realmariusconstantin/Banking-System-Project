@@ -2,12 +2,16 @@ package GUI;
 
 import data.ThomondBankData;
 import models.accounts.Account;
+import models.accounts.CurrentAccount;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 
 public class ATM {
+    ;
+
     private JPanel rootPanel;
     private JTabbedPane ATMTabbedPane;
     private JTextField accountIDTextField;
@@ -23,9 +27,9 @@ public class ATM {
     private JButton changeAIRButton;
     private JButton changeOverdraftLimitButton;
 
+
     public static void main(String[] args) {
         new ThomondBankData();
-
         JFrame frame = new JFrame("ATM");
         frame.setContentPane(new ATM().rootPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -46,7 +50,7 @@ public class ATM {
                 int id = Integer.parseInt(accountIDTextField.getText());
                 Account acc = findAccountById(id);
                 if (acc != null) {
-                    String input = JOptionPane.showInputDialog("Balance: "+ acc.getBalance() + "\nEnter amount to deposit:");
+                    String input = JOptionPane.showInputDialog("Balance: " + acc.getBalance() + "\nEnter amount to deposit:");
                     double amount = Double.parseDouble(input);
                     acc.deposit(amount);
                     JOptionPane.showMessageDialog(null, "Deposited €" + amount + ". \nNew Balance: €" + acc.getBalance());
@@ -60,20 +64,31 @@ public class ATM {
 
         withdrawButton.addActionListener(e -> {
             try {
-                int id = Integer.parseInt(accountIDTextField.getText());
-                Account acc = findAccountById(id);
-                if (acc != null) {
-                    String input = JOptionPane.showInputDialog("Balance: "+ acc.getBalance() + "\nEnter amount to withdraw:");
-                    double amount = Double.parseDouble(input);
-                    acc.withdraw(amount);
-                    JOptionPane.showMessageDialog(null, "Withdrew €" + amount + ". New Balance: €" + acc.getBalance());
+                int accountId = Integer.parseInt(accountIDTextField.getText().trim());
+                double amountToWithdraw = Double.parseDouble(
+                        JOptionPane.showInputDialog("Enter amount to withdraw:")
+                );
+
+                Account account = findAccountById(accountId);
+
+                if (account != null) {
+                    boolean success = account.withdraw(amountToWithdraw);
+
+                    if (success) {
+                        JOptionPane.showMessageDialog(null, "Withdrawal successful. New balance: " + account.getBalance());
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Withdrawal failed. Insufficient funds.");
+                    }
+
                 } else {
                     JOptionPane.showMessageDialog(null, "Account not found.");
                 }
+
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(null, "Invalid input.");
             }
         });
+
 
         balanceButton.addActionListener(e -> {
             try {
@@ -95,11 +110,23 @@ public class ATM {
                 System.exit(0);
             }
         });
+
+
+        //Group up the buttons
+        ButtonGroup accountTypeGroup = new ButtonGroup();
+        accountTypeGroup.add(depositAccountRadioButton);
+        accountTypeGroup.add(currentAccountRadioButton);
+
+        //when deposit account is selected, disable the overdraft limit button
+        depositAccountRadioButton.addActionListener(e -> {
+            changeOverdraftLimitButton.setEnabled(false);
+        });
+
+        //when current account is selected, enable the overdraft limit button
+        currentAccountRadioButton.addActionListener(e -> {
+            changeOverdraftLimitButton.setEnabled(true);
+        });
+
+
     }
-
-
-
-
-
-
 }

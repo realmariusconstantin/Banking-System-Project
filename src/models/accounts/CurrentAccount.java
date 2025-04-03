@@ -10,12 +10,14 @@ public class CurrentAccount extends Account {
     }
 
     @Override
-    public void withdraw(double amount) {
-        if (amount > 0 && amount <= balance + overdraft) {
+    public boolean withdraw(double amount) {
+        if (amount > 0 && amount <= (balance + overdraft)) {
             balance -= amount;
+            return true;
         } else {
             System.out.println("Withdrawal exceeds overdraft limit. Denied.");
         }
+        return false;
     }
 
     public double getOverdraft() {
