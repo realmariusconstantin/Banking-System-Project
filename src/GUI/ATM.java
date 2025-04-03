@@ -46,10 +46,10 @@ public class ATM {
                 int id = Integer.parseInt(accountIDTextField.getText());
                 Account acc = findAccountById(id);
                 if (acc != null) {
-                    String input = JOptionPane.showInputDialog("Enter amount to deposit:");
+                    String input = JOptionPane.showInputDialog("Balance: "+ acc.getBalance() + "\nEnter amount to deposit:");
                     double amount = Double.parseDouble(input);
                     acc.deposit(amount);
-                    JOptionPane.showMessageDialog(null, "Deposited €" + amount + ". New Balance: €" + acc.getBalance());
+                    JOptionPane.showMessageDialog(null, "Deposited €" + amount + ". \nNew Balance: €" + acc.getBalance());
                 } else {
                     JOptionPane.showMessageDialog(null, "Account not found.");
                 }
@@ -63,7 +63,7 @@ public class ATM {
                 int id = Integer.parseInt(accountIDTextField.getText());
                 Account acc = findAccountById(id);
                 if (acc != null) {
-                    String input = JOptionPane.showInputDialog("Enter amount to withdraw:");
+                    String input = JOptionPane.showInputDialog("Balance: "+ acc.getBalance() + "\nEnter amount to withdraw:");
                     double amount = Double.parseDouble(input);
                     acc.withdraw(amount);
                     JOptionPane.showMessageDialog(null, "Withdrew €" + amount + ". New Balance: €" + acc.getBalance());
@@ -74,7 +74,30 @@ public class ATM {
                 JOptionPane.showMessageDialog(null, "Invalid input.");
             }
         });
+
+        balanceButton.addActionListener(e -> {
+            try {
+                int id = Integer.parseInt(accountIDTextField.getText());
+                Account acc = findAccountById(id);
+                if (acc != null) {
+                    JOptionPane.showMessageDialog(null, "Balance: €" + acc.getBalance());
+                } else {
+                    JOptionPane.showMessageDialog(null, "Account not found.");
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "Invalid input.");
+            }
+        });
+
+        logoutButton.addActionListener(e -> {
+            int response = JOptionPane.showConfirmDialog(null, "Are you sure you want to log out?", "Logout", JOptionPane.YES_NO_OPTION);
+            if (response == JOptionPane.YES_OPTION) {
+                System.exit(0);
+            }
+        });
     }
+
+
 
 
 
