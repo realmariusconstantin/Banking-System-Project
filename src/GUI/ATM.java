@@ -2,11 +2,15 @@ package GUI;
 
 import data.ThomondBankData;
 import models.accounts.Account;
-import models.accounts.CurrentAccount;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.time.LocalDate;
+
+import models.accounts.CurrentAccount;
+import models.accounts.DepositAccount;
+import models.persons.BankManager;
+import models.persons.BankOfficer;
+import models.persons.Customer;
 
 
 public class ATM {
@@ -131,30 +135,65 @@ public class ATM {
 
         // Create New Account button
         createNewAccountButton.addActionListener(e -> {
-          String[] options = {"Customer", "Bank Staff"};
-          int Choice = JOptionPane.showOptionDialog(null, "Select Account Type", "Account Type",
-                  JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+            String[] options = {"Customer", "Bank Staff"};
+            int Choice = JOptionPane.showOptionDialog(null, "Select Account Type", "Account Type",
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
 
-          if(Choice == 0){
-              JOptionPane.showMessageDialog(null, "Customer account created.");
+            if (Choice == 0) {
+                // Create Customer
+                JTextField firstNameField = new JTextField();
+                JTextField lastNameField = new JTextField();
+                JTextField addressField = new JTextField();
+                JTextField dobField = new JTextField();
 
-          } else if(Choice == 1){
-              String[] staffOptions = {"Bank Manager", "Bank Staff"};
-                int staffChoice = JOptionPane.showOptionDialog(null, "Select Staff Type", "Staff Type",
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, staffOptions, staffOptions[0]);
-                if(staffChoice == 0){
-                    JOptionPane.showMessageDialog(null, "Bank Manager account created.");
-                } else if(staffChoice == 1){
-                    JOptionPane.showMessageDialog(null, "Bank Staff account created.");
-                } else {
-                    JOptionPane.showMessageDialog(null, "Invalid choice.");
+                JPanel panel = new JPanel();
+                panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+                panel.add(new JLabel("First Name:"));
+                panel.add(firstNameField);
+                panel.add(new JLabel("Last Name:"));
+                panel.add(lastNameField);
+                panel.add(new JLabel("Address:"));
+                panel.add(addressField);
+                panel.add(new JLabel("Date of Birth (YYYY-MM-DD):"));
+                panel.add(dobField);
+
+                int result = JOptionPane.showConfirmDialog(null, panel, "Create Customer Account", JOptionPane.OK_CANCEL_OPTION);
+
+                if (result == JOptionPane.OK_OPTION) {
+                    String firstName = firstNameField.getText();
+                    String lastName = lastNameField.getText();
+                    String address = addressField.getText();
+                    LocalDate dob = LocalDate.parse(dobField.getText());
+                    int custNo = ThomondBankData.thomondCustomers.size() + 1;
+
+                    Customer customer = new Customer(firstName, lastName, address, dob, custNo);
+                    ThomondBankData.thomondCustomers.add(customer);
+
+                    // Ask what type of account to create
+                    String[] accountTypes = {"Deposit Account", "Current Account"};
+                    int accType = JOptionPane.showOptionDialog(null, "Select Account Type", "Account Type",
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, accountTypes, accountTypes[0]);
+
+                    int newAccountId = ThomondBankData.generateAccountId();
+
+                    if (accType == 0) {
+                        DepositAccount da = new DepositAccount(newAccountId, custNo);
+                        ThomondBankData.thomondAccounts.add(da);
+                        JOptionPane.showMessageDialog(null, "Deposit Account created for customer.");
+                    } else if (accType == 1) {
+                        String overdraftStr = JOptionPane.showInputDialog("Enter Overdraft Limit for Current Account:");
+                        double overdraft = Double.parseDouble(overdraftStr);
+                        CurrentAccount ca = new CurrentAccount(newAccountId, custNo, overdraft);
+                        ThomondBankData.thomondAccounts.add(ca);
+                        JOptionPane.showMessageDialog(null, "Current Account created for customer.");
+                    }
+
+                    JOptionPane.showMessageDialog(null, "Customer created. Cust No: " + custNo);
                 }
-
-
-          }
-
+            }
         });
-
-
     }
 }
+
+
+

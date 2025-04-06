@@ -1,12 +1,26 @@
 package data;
 
-import javax.swing.*;
+
 import java.util.ArrayList;
 import models.accounts.*;
+import models.persons.BankStaff;
+import models.persons.Customer;
 
 public class ThomondBankData extends javax.swing.JFrame {
 
     public static ArrayList<Account> thomondAccounts = new ArrayList<>();
+    public static ArrayList<Customer> thomondCustomers = new ArrayList<>();
+    public static ArrayList<BankStaff> thomondStaff = new ArrayList<>();
+
+    public static int nextAccountId = 8; //Start IDs after dummy data
+
+    public static int generateCustomerNumber() {
+        return thomondCustomers.size() + 1;
+    }
+
+    public static int generateAccountId() {
+        return nextAccountId++; //Use and increment
+    }
 
     public ThomondBankData() {
         populateMyAccounts();
