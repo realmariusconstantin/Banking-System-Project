@@ -136,114 +136,121 @@ public class ATM {
 
         // Create New Account button
         createNewAccountButton.addActionListener(e -> {
-            String[] options = {"Customer", "Bank Staff"};
-            int Choice = JOptionPane.showOptionDialog(null, "Select Account Type", "Account Type",
-                    JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+            JTextField accountIDField = new JTextField();
+            JTextField customerNoField = new JTextField();
+            JTextField overdraftField = new JTextField();
+            JRadioButton depositAccountRadioButton = new JRadioButton("Deposit Account");
+            JRadioButton currentAccountRadioButton = new JRadioButton("Current Account");
+            accountTypeGroup.add(depositAccountRadioButton);
+            accountTypeGroup.add(currentAccountRadioButton);
 
-            if (Choice == 0) {
-                // Create Customer
-                JTextField firstNameField = new JTextField();
-                JTextField lastNameField = new JTextField();
-                JTextField addressField = new JTextField();
-                JTextField dobField = new JTextField();
+            JPanel panel = new JPanel();
+            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+            panel.add(new JLabel("Account ID:"));
+            panel.add(accountIDField);
+            panel.add(new JLabel("Customer Number:"));
+            panel.add(customerNoField);
+            panel.add(new JLabel("Account Type:"));
+            panel.add(depositAccountRadioButton);
+            panel.add(currentAccountRadioButton);
+            panel.add(new JLabel("Overdraft Limit (Current Only):"));
+            panel.add(overdraftField);
+            overdraftField.setEnabled(currentAccountRadioButton.isSelected());
 
-                JPanel panel = new JPanel();
-                panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-                panel.add(new JLabel("First Name:"));
-                panel.add(firstNameField);
-                panel.add(new JLabel("Last Name:"));
-                panel.add(lastNameField);
-                panel.add(new JLabel("Address:"));
-                panel.add(addressField);
-                panel.add(new JLabel("Date of Birth (YYYY-MM-DD):"));
-                panel.add(dobField);
+            currentAccountRadioButton.addActionListener(ev -> overdraftField.setEnabled(true));
+            depositAccountRadioButton.addActionListener(ev -> overdraftField.setEnabled(false));
 
-                int result = JOptionPane.showConfirmDialog(null, panel, "Create Customer Account", JOptionPane.OK_CANCEL_OPTION);
+            int result = JOptionPane.showConfirmDialog(null, panel, "New Account", JOptionPane.OK_CANCEL_OPTION);
+            if (result == JOptionPane.OK_OPTION) {
+                try {
+                    int accountId = Integer.parseInt(accountIDField.getText());
+                    int customerNo = Integer.parseInt(customerNoField.getText());
 
-                if (result == JOptionPane.OK_OPTION) {
-                    String firstName = firstNameField.getText();
-                    String lastName = lastNameField.getText();
-                    String address = addressField.getText();
-                    LocalDate dob = LocalDate.parse(dobField.getText());
-                    int custNo = ThomondBankData.thomondCustomers.size() + 1;
-
-                    Customer customer = new Customer(firstName, lastName, address, dob, custNo);
-                    ThomondBankData.thomondCustomers.add(customer);
-
-                    // Ask what type of account to create
-                    String[] accountTypes = {"Deposit Account", "Current Account"};
-                    int accType = JOptionPane.showOptionDialog(null, "Select Account Type", "Account Type",
-                            JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, accountTypes, accountTypes[0]);
-
-                    int newAccountId = ThomondBankData.generateAccountId();
-
-                    if (accType == 0) {
-                        DepositAccount da = new DepositAccount(newAccountId, custNo);
-                        ThomondBankData.thomondAccounts.add(da);
-                        JOptionPane.showMessageDialog(null, "Deposit Account created for customer.");
-                    } else if (accType == 1) {
-                        String overdraftStr = JOptionPane.showInputDialog("Enter Overdraft Limit for Current Account:");
-                        double overdraft = Double.parseDouble(overdraftStr);
-                        CurrentAccount ca = new CurrentAccount(newAccountId, custNo, overdraft);
-                        ThomondBankData.thomondAccounts.add(ca);
-                        JOptionPane.showMessageDialog(null, "Current Account created for customer.");
-                    }
-
-                    JOptionPane.showMessageDialog(null, "Customer created. Cust No: " + custNo);
-                }  else {
-                    JOptionPane.showMessageDialog(null, "Customer creation cancelled.");
-                }
-            } else if (Choice == 1) {
-                // Create Bank Staff
-                JTextField firstNameField = new JTextField();
-                JTextField lastNameField = new JTextField();
-                JTextField addressField = new JTextField();
-                JTextField dobField = new JTextField();
-                JTextField empNoField = new JTextField();
-                JTextField jobTitleField = new JTextField();
-
-                JPanel panel = new JPanel();
-                panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-                panel.add(new JLabel("First Name:"));
-                panel.add(firstNameField);
-                panel.add(new JLabel("Last Name:"));
-                panel.add(lastNameField);
-                panel.add(new JLabel("Address:"));
-                panel.add(addressField);
-                panel.add(new JLabel("Date of Birth (YYYY-MM-DD):"));
-                panel.add(dobField);
-                panel.add(new JLabel("Employee Number:"));
-                panel.add(empNoField);
-                panel.add(new JLabel("Job Title:"));
-                panel.add(jobTitleField);
-
-                int result = JOptionPane.showConfirmDialog(null, panel, "Create Bank Staff Account", JOptionPane.OK_CANCEL_OPTION);
-
-                if (result == JOptionPane.OK_OPTION) {
-                    String firstName = firstNameField.getText();
-                    String lastName = lastNameField.getText();
-                    String address = addressField.getText();
-                    LocalDate dob = LocalDate.parse(dobField.getText());
-                    int empNo = Integer.parseInt(empNoField.getText());
-                    String jobTitle = jobTitleField.getText();
-
-                    BankStaff staff;
-                    if (jobTitle.equalsIgnoreCase("Manager")) {
-                        staff = new BankStaff(firstName, lastName, address, dob, empNo, jobTitle);
+                    Account newAccount;
+                    if (currentAccountRadioButton.isSelected()) {
+                        double overdraft = Double.parseDouble(overdraftField.getText());
+                        newAccount = new CurrentAccount(accountId, customerNo, overdraft);
                     } else {
-                        staff = new BankStaff(firstName, lastName, address, dob, empNo, jobTitle);
+                        newAccount = new DepositAccount(accountId, customerNo);
                     }
 
-                    ThomondBankData.thomondStaff.add(staff);
-                    JOptionPane.showMessageDialog(null, "Bank Staff created. Emp No: " + empNo);
-                } else {
-                    JOptionPane.showMessageDialog(null, "Bank Staff creation cancelled.");
+                    ThomondBankData.thomondAccounts.add(newAccount);
+                    JOptionPane.showMessageDialog(null, "New account created with ID: " + newAccount.getId());
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "Please enter valid numbers.");
                 }
             }
         });
+        // Change Air Button
+
+        changeAIRButton.addActionListener(e -> { {
+                // Ask user which account type
+                Object[] options = {"Deposit Account", "Current Account"};
+                int choice = JOptionPane.showOptionDialog(
+                        null,
+                        "Apply AIR to which account type?",
+                        "Change AIR",
+                        JOptionPane.DEFAULT_OPTION,
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        options,
+                        options[0]);
+
+                if (choice == JOptionPane.CLOSED_OPTION) return;
+
+                // Ask user for the new AIR %
+                String input = JOptionPane.showInputDialog("Enter new AIR (%):");
+                try {
+                    double air = Double.parseDouble(input) / 100;
+
+                    // Apply to correct account type
+                    if (choice == 0) {
+                        DepositAccount.setAIR(air);
+                        JOptionPane.showMessageDialog(null, "Deposit AIR set to " + (air * 100) + "%");
+                    } else if (choice == 1) {
+                        CurrentAccount.setAIR(air);
+                        JOptionPane.showMessageDialog(null, "Current AIR set to " + (air * 100) + "%");
+                    }
+
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null, "Invalid AIR. Please enter a number like 2.5");
+                }
+            }
+        });
+
+        // Change OverDraft Limit
+
+        changeOverdraftLimitButton.addActionListener(e ->  {
+                try {
+
+                    String idInput = JOptionPane.showInputDialog("Enter Account ID");
+                    int accId = Integer.parseInt(idInput);
+
+                    Account acc = findAccountById(accId);
+
+                    if (acc instanceof CurrentAccount) {
+
+                        String overdraftINput = JOptionPane.showInputDialog("Enter New Overdraft Limit");
+                        double newLimit = Double.parseDouble(overdraftINput);
+
+                        ((CurrentAccount) acc).setOverdraft(newLimit);
+
+                        JOptionPane.showMessageDialog(null, "Overdraft Limit updated to € " + newLimit + "for Account ID: " + accId);
+
+                    } else if (acc != null) {
+                        JOptionPane.showMessageDialog(null, "This is not a Current Account");
+
+
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Account Not Found");
+
+                    }
+
+
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "Invalid Input");
+
+                }
+        });
     }
-    // Change AIR button
 }
-
-
-
