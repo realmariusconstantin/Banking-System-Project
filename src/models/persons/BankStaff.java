@@ -2,7 +2,7 @@ package models.persons;
 
 import java.time.LocalDate;
 
-public abstract class BankStaff extends Person {
+public class BankStaff extends Person {
     protected int empNo;
     protected String jobTitle;
 

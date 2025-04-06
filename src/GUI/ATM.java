@@ -10,6 +10,7 @@ import models.accounts.CurrentAccount;
 import models.accounts.DepositAccount;
 import models.persons.BankManager;
 import models.persons.BankOfficer;
+import models.persons.BankStaff;
 import models.persons.Customer;
 
 
@@ -189,10 +190,59 @@ public class ATM {
                     }
 
                     JOptionPane.showMessageDialog(null, "Customer created. Cust No: " + custNo);
+                }  else {
+                    JOptionPane.showMessageDialog(null, "Customer creation cancelled.");
+                }
+            } else if (Choice == 1) {
+                // Create Bank Staff
+                JTextField firstNameField = new JTextField();
+                JTextField lastNameField = new JTextField();
+                JTextField addressField = new JTextField();
+                JTextField dobField = new JTextField();
+                JTextField empNoField = new JTextField();
+                JTextField jobTitleField = new JTextField();
+
+                JPanel panel = new JPanel();
+                panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+                panel.add(new JLabel("First Name:"));
+                panel.add(firstNameField);
+                panel.add(new JLabel("Last Name:"));
+                panel.add(lastNameField);
+                panel.add(new JLabel("Address:"));
+                panel.add(addressField);
+                panel.add(new JLabel("Date of Birth (YYYY-MM-DD):"));
+                panel.add(dobField);
+                panel.add(new JLabel("Employee Number:"));
+                panel.add(empNoField);
+                panel.add(new JLabel("Job Title:"));
+                panel.add(jobTitleField);
+
+                int result = JOptionPane.showConfirmDialog(null, panel, "Create Bank Staff Account", JOptionPane.OK_CANCEL_OPTION);
+
+                if (result == JOptionPane.OK_OPTION) {
+                    String firstName = firstNameField.getText();
+                    String lastName = lastNameField.getText();
+                    String address = addressField.getText();
+                    LocalDate dob = LocalDate.parse(dobField.getText());
+                    int empNo = Integer.parseInt(empNoField.getText());
+                    String jobTitle = jobTitleField.getText();
+
+                    BankStaff staff;
+                    if (jobTitle.equalsIgnoreCase("Manager")) {
+                        staff = new BankStaff(firstName, lastName, address, dob, empNo, jobTitle);
+                    } else {
+                        staff = new BankStaff(firstName, lastName, address, dob, empNo, jobTitle);
+                    }
+
+                    ThomondBankData.thomondStaff.add(staff);
+                    JOptionPane.showMessageDialog(null, "Bank Staff created. Emp No: " + empNo);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Bank Staff creation cancelled.");
                 }
             }
         });
     }
+    // Change AIR button
 }
 
 
